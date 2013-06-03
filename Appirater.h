@@ -91,7 +91,7 @@ extern NSString *const kAppiraterReminderRequestDate;
  */
 #define APPIRATER_RATE_LATER			NSLocalizedStringFromTable(@"Remind me later", @"AppiraterLocalizable", nil)
 
-@interface Appirater : NSObject <UIAlertViewDelegate, SKStoreProductViewControllerDelegate,UINavigationControllerDelegate, MFMailComposeViewControllerDelegate> {
+@interface Appirater : NSObject <UIAlertViewDelegate, MFMailComposeViewControllerDelegate> {
 
 	UIAlertView		*ratingAlert;
 }
@@ -239,11 +239,6 @@ extern NSString *const kAppiraterReminderRequestDate;
  Set whether or not Appirater uses animation (currently respected when pushing modal StoreKit rating VCs).
  */
 + (void)setUsesAnimation:(BOOL)animation;
-
-/*
- If set to YES, Appirater will open App Store link (instead of SKStoreProductViewController on iOS 6). Default NO.
- */
-+ (void)setOpenInAppStore:(BOOL)openInAppStore;
 
 @end
 

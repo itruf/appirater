@@ -64,7 +64,6 @@ static BOOL _debug = NO;
 	__weak static id<AppiraterDelegate> _delegate;
 #endif
 static BOOL _usesAnimation = TRUE;
-static BOOL _openInAppStore = NO;
 static UIStatusBarStyle _statusBarStyle;
 static BOOL _modalOpen = false;
 
@@ -100,19 +99,16 @@ static BOOL _modalOpen = false;
 + (void) setDebug:(BOOL)debug {
     _debug = debug;
 }
-+ (void)setDelegate:(id<AppiraterDelegate>)delegate{
++ (void) setDelegate:(id<AppiraterDelegate>)delegate{
 	_delegate = delegate;
 }
-+ (void)setUsesAnimation:(BOOL)animation {
++ (void) setUsesAnimation:(BOOL)animation {
 	_usesAnimation = animation;
 }
-+ (void)setOpenInAppStore:(BOOL)openInAppStore {
-    _openInAppStore = openInAppStore;
-}
-+ (void)setStatusBarStyle:(UIStatusBarStyle)style {
++ (void) setStatusBarStyle:(UIStatusBarStyle)style {
 	_statusBarStyle = style;
 }
-+ (void)setModalOpen:(BOOL)open {
++ (void) setModalOpen:(BOOL)open {
 	_modalOpen = open;
 }
 
@@ -483,11 +479,6 @@ static BOOL _modalOpen = false;
 		default:
 			break;
 	}
-}
-
-//Delegate call from the StoreKit view.
-- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
-	[Appirater closeModal];
 }
 
 //Close the in-app rating (StoreKit) view and restore the previous status bar style.
