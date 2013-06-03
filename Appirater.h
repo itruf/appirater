@@ -36,7 +36,6 @@
 
 #import <Foundation/Foundation.h>
 #import "AppiraterDelegate.h"
-#import <StoreKit/StoreKit.h>
 #import <MessageUI/MessageUI.h>
 
 extern NSString *const kAppiraterFirstUseDate;
