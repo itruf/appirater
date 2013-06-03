@@ -81,10 +81,6 @@ static BOOL _modalOpen = false;
 
 @synthesize ratingAlert;
 
-+ (void) setAppId:(NSString *)appId {
-    _appId = appId;
-}
-
 + (void) setDaysUntilPrompt:(double)value {
     _daysUntilPrompt = value;
 }
@@ -438,38 +434,19 @@ static BOOL _modalOpen = false;
 }
 
 + (void)rateApp {
-	
-	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-	[userDefaults setBool:YES forKey:kAppiraterRatedCurrentVersion];
-	[userDefaults synchronize];
-
-	//Use the in-app StoreKit view if available (iOS 6) and imported. This works in the simulator.
-	if (!_openInAppStore && NSStringFromClass([SKStoreProductViewController class]) != nil) {
-		
-		SKStoreProductViewController *storeViewController = [[SKStoreProductViewController alloc] init];
-		NSNumber *appId = [NSNumber numberWithInteger:_appId.integerValue];
-		[storeViewController loadProductWithParameters:@{SKStoreProductParameterITunesItemIdentifier:appId} completionBlock:nil];
-		storeViewController.delegate = self.sharedInstance;
-		if ([self.sharedInstance.delegate respondsToSelector:@selector(appiraterWillPresentModalView:animated:)]) {
-			[self.sharedInstance.delegate appiraterWillPresentModalView:self.sharedInstance animated:_usesAnimation];
-		}
-		[[self getRootViewController] presentViewController:storeViewController animated:_usesAnimation completion:^{
-			[self setModalOpen:YES];
-			//Temporarily use a black status bar to match the StoreKit view.
-			[self setStatusBarStyle:[UIApplication sharedApplication].statusBarStyle];
-			[[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:_usesAnimation];
-		}];
-	
-	//Use the standard openUrl method if StoreKit is unavailable.
-	} else {
-		
-		#if TARGET_IPHONE_SIMULATOR
-		NSLog(@"APPIRATER NOTE: iTunes App Store is not supported on the iOS simulator. Unable to open App Store page.");
-		#else
-		NSString *reviewURL = [templateReviewURL stringByReplacingOccurrencesOfString:@"APP_ID" withString:[NSString stringWithFormat:@"%@", _appId]];
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:reviewURL]];
-		#endif
-	}
+	MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+    [mailer setMailComposeDelegate:[Appirater sharedInstance]];
+    [mailer setSubject:APPIRATER_APP_NAME];
+    NSArray *toRecipients = [NSArray arrayWithObjects:mail, nil];
+    [mailer setToRecipients:toRecipients];
+    NSString *emailBody = [NSString stringWithFormat:@"Version: %@\n", [[NSUserDefaults standardUserDefaults] objectForKey:kAppiraterCurrentVersion]];
+    [mailer setMessageBody:emailBody isHTML:NO];
+    [[self getRootViewController] presentViewController:mailer animated:_usesAnimation completion:^{
+        [self setModalOpen:YES];
+        //Temporarily use a black status bar to match the StoreKit view.
+        [self setStatusBarStyle:[UIApplication sharedApplication].statusBarStyle];
+        [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:_usesAnimation];
+    }];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
@@ -532,4 +509,12 @@ static BOOL _modalOpen = false;
 	}
 }
 
+//Close mail
+- (void) mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
+    NSLog(@"close");
+    [Appirater closeModal];
+}
+
+
 @end
+

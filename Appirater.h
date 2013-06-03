@@ -37,6 +37,7 @@
 #import <Foundation/Foundation.h>
 #import "AppiraterDelegate.h"
 #import <StoreKit/StoreKit.h>
+#import <MessageUI/MessageUI.h>
 
 extern NSString *const kAppiraterFirstUseDate;
 extern NSString *const kAppiraterUseCount;
@@ -45,6 +46,11 @@ extern NSString *const kAppiraterCurrentVersion;
 extern NSString *const kAppiraterRatedCurrentVersion;
 extern NSString *const kAppiraterDeclinedToRate;
 extern NSString *const kAppiraterReminderRequestDate;
+
+
+//Mail to send
+#define mail @"ivan.trufanov@me.com"
+
 
 /*
  Your localized app's name.
@@ -85,7 +91,7 @@ extern NSString *const kAppiraterReminderRequestDate;
  */
 #define APPIRATER_RATE_LATER			NSLocalizedStringFromTable(@"Remind me later", @"AppiraterLocalizable", nil)
 
-@interface Appirater : NSObject <UIAlertViewDelegate, SKStoreProductViewControllerDelegate> {
+@interface Appirater : NSObject <UIAlertViewDelegate, SKStoreProductViewControllerDelegate,UINavigationControllerDelegate, MFMailComposeViewControllerDelegate> {
 
 	UIAlertView		*ratingAlert;
 }
