@@ -25,6 +25,7 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  OTHER DEALINGS IN THE SOFTWARE.
  */
+
 /*
  * Appirater.h
  * appirater
@@ -178,11 +179,6 @@ extern NSString *const kAppiraterReminderRequestDate;
 @end
 
 @interface Appirater(Configuration)
-
-/*
- Set your Apple generated software id here.
- */
-+ (void) setAppId:(NSString*)appId;
 
 /*
  Users will need to have the same version of your app installed for this many
