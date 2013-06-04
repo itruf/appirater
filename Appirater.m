@@ -50,9 +50,6 @@ NSString *const kAppiraterRatedCurrentVersion		= @"kAppiraterRatedCurrentVersion
 NSString *const kAppiraterDeclinedToRate			= @"kAppiraterDeclinedToRate";
 NSString *const kAppiraterReminderRequestDate		= @"kAppiraterReminderRequestDate";
 
-NSString *templateReviewURL = @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=APP_ID";
-
-static NSString *_appId;
 static double _daysUntilPrompt = 30;
 static NSInteger _usesUntilPrompt = 20;
 static NSInteger _significantEventsUntilPrompt = -1;
@@ -345,10 +342,6 @@ static BOOL _modalOpen = false;
     return [[NSUserDefaults standardUserDefaults] boolForKey:kAppiraterRatedCurrentVersion];
 }
 
-+ (void)appLaunched {
-	[Appirater appLaunched:YES];
-}
-
 + (void)appLaunched:(BOOL)canPromptForRating {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0),
                    ^{
@@ -431,15 +424,17 @@ static BOOL _modalOpen = false;
 
 + (void)rateApp {
 	MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+    
     [mailer setMailComposeDelegate:[Appirater sharedInstance]];
     [mailer setSubject:APPIRATER_APP_NAME];
-    NSArray *toRecipients = [NSArray arrayWithObjects:mail, nil];
-    [mailer setToRecipients:toRecipients];
+    
+    [mailer setToRecipients:@[mail]];
+    
     NSString *emailBody = [NSString stringWithFormat:@"Version: %@\n", [[NSUserDefaults standardUserDefaults] objectForKey:kAppiraterCurrentVersion]];
     [mailer setMessageBody:emailBody isHTML:NO];
+    
     [[self getRootViewController] presentViewController:mailer animated:_usesAnimation completion:^{
         [self setModalOpen:YES];
-        //Temporarily use a black status bar to match the StoreKit view.
         [self setStatusBarStyle:[UIApplication sharedApplication].statusBarStyle];
         [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:_usesAnimation];
     }];
@@ -481,7 +476,7 @@ static BOOL _modalOpen = false;
 	}
 }
 
-//Close the in-app rating (StoreKit) view and restore the previous status bar style.
+//Close modal view controller
 + (void)closeModal {
 	if (_modalOpen) {
 		[[UIApplication sharedApplication]setStatusBarStyle:_statusBarStyle animated:_usesAnimation];
